@@ -15,7 +15,6 @@ const patentStatus = {//rejected publishing published completed
     Published: {code: 6, text: 'Patent published'}
 };
 
-// Global Finance contract
 class GlobalPatents extends Contract {
 
     // instantiate with keys to collect participant ids
@@ -180,6 +179,8 @@ class GlobalPatents extends Contract {
     // verifier verifies the patent request, patent request status is changed to PendingPublish, publisher ID is added to patent request.
     async verifyPatentRequest(ctx, patentID, ownerIDs, verifierID, publisherID) {
         let patentRequestData = await ctx.stub.getState(patentID);
+        console.info("pat");
+        console.info(patentRequestData);
         let patentRequest;
         if (patentRequestData) {
             patentRequest = JSON.parse(patentRequestData.toString());

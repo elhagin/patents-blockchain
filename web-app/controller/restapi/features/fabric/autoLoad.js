@@ -23,6 +23,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const sleep = require('sleep');
 
 // Bring Fabric SDK network class
 const { FileSystemWallet, Gateway } = require('fabric-network');
@@ -66,7 +67,7 @@ exports.autoLoad = async function autoLoad(req, res, next) {
 
         // A gateway defines the peers used to access Fabric networks
         const gateway = new Gateway();
-        await gateway.connect(ccp, { wallet, identity: 'user1', discovery: { enabled: false } });
+        await gateway.connect(ccp, { wallet, identity: 'User1@org1.example.com', discovery: { enabled: false } });
 
         // Get addressability to network
         const network = await gateway.getNetwork('mychannel');
@@ -88,6 +89,7 @@ exports.autoLoad = async function autoLoad(req, res, next) {
         const responseAuditor = await contract.evaluateTransaction('GetState', "auditors");
         let auditors = JSON.parse(JSON.parse(responseAuditor.toString()));
 
+        let transactionCount = 0;
         //iterate through the list of members in the memberList.json file        
         for (let member of startupFile.members) {
 
@@ -101,29 +103,44 @@ exports.autoLoad = async function autoLoad(req, res, next) {
 
             for (let owner of owners) { 
                 if (owner == member.id) {
+                    continue;
                     res.send({'error': 'member id already exists'});
                 }
             }
             for (let verifier of verifiers) { 
                 if (verifier == member.id) {
+                    continue;
                     res.send({'error': 'member id already exists'});
                 }
             }
             for (let publisher of publishers) { 
                 if (publisher == member.id) {
+                    continue;
                     res.send({'error': 'member id already exists'});
                 }
             }
             for (let auditor of auditors) { 
                 if (auditor == member.id) {
+                    continue;
                     res.send({'error': 'member id already exists'});
                 }
             }
-                        
+            
+            // remove 'await' before each submitTransaction call to send 3 transactions at once
+            let response;
             //register an owner, a verifier, publisher, auditor
-            const response = await contract.submitTransaction(transaction, member.id, member.companyName);
-            console.log('transaction response: ')
-            console.log(JSON.parse(response.toString()));  
+            if (transactionCount === 2) {
+                transactionCount = 0;
+                response = await contract.submitTransaction(transaction, member.id, member.companyName);
+                sleep.sleep(3);
+            } else {
+                response = await contract.submitTransaction(transaction, member.id, member.companyName);
+                transactionCount++;
+            }
+            
+            // console.log('transaction response: ');
+            // console.log(JSON.parse(response.toString()));  
+            // console.log(response.toString());  
                                             
             console.log('Next');                
 
@@ -141,17 +158,28 @@ exports.autoLoad = async function autoLoad(req, res, next) {
             }                           
         }
 
+        transactionCount = 0;
         console.log('Go through all patents'); 
         for (let patent of startupFile.assets) {
             for (let patentNo of allPatents) { 
                 if (patentNo == patent.id) {
+                    continue;
                     res.send({'error': 'patent already exists'});
                 }
             }
             
-            const createPatentResponse = await contract.submitTransaction('createPatentRequest', patent.id, patent.owners, patent.verifier, patent.patentIndustry, patent.priorArtifacts, patent.details);
-            console.log('createPatentResponse: ');
-            console.log(JSON.parse(createPatentResponse.toString()));
+            // remove 'await' before each submitTransaction call to send 3 transactions at once
+            if (transactionCount === 2) {
+                transactionCount = 0;
+                await contract.submitTransaction('createPatentRequest', patent.id, patent.owners, patent.verifier, patent.patentIndustry, patent.priorArtifacts, patent.details);
+                sleep.sleep(3);
+            } else {
+                await contract.submitTransaction('createPatentRequest', patent.id, patent.owners, patent.verifier, patent.patentIndustry, patent.priorArtifacts, patent.details);
+                transactionCount++;
+            }
+            // const createPatentResponse = await contract.submitTransaction('createPatentRequest', patent.id, patent.owners, patent.verifier, patent.patentIndustry, patent.priorArtifacts, patent.details);
+            // console.log('createPatentResponse: ');
+            // console.log(JSON.parse(createPatentResponse.toString()));
 
             console.log('Next');
                       

@@ -10,7 +10,7 @@ channel.addPeer(peer);
 var order = fabric_client.newOrderer('grpc://localhost:7050')
 channel.addOrderer(order);
 
-var store_path = path.join(__dirname, '_idwallet', 'user1');
+var store_path = path.join(__dirname, '_idwallet', 'User1@org1.example.com');
 //console.log('Store path:'+store_path);
 
 exports.getBlockchain = async function(req, res, next) {
@@ -33,7 +33,7 @@ exports.getBlockchain = async function(req, res, next) {
     fabric_client.setCryptoSuite(crypto_suite);
 
     // get the enrolled user from persistence, this user will sign all requests
-    user_from_store = await fabric_client.getUserContext('user1', true);
+    user_from_store = await fabric_client.getUserContext('User1@org1.example.com', true);
 
     if (user_from_store && user_from_store.isEnrolled()) {
       //console.log('Successfully loaded User1@org1.example.com from persistence');
