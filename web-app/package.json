@@ -1,7 +1,7 @@
 {
-  "name": "global-financing-app",
+  "name": "patent-publishing",
   "version": "0.0.1",
-  "description": "A global financing web-application",
+  "description": "A patent publishing web-application",
   "scripts": {
     "start": "nodemon index"
   },

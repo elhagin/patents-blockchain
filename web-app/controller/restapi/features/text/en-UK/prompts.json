@@ -1,13 +1,13 @@
 {
     "index": {"language":"US English",
-    "title":"Global Finance",
-    "header":"Global Finance with Blockchain",
-    "titleBar":"Global Finance Code Pattern",
+    "title":"Patent Publishing",
+    "header":"Patent Publishing with Blockchain",
+    "titleBar":"Patent Publishing Code Pattern",
     "idx_unified":"load Unified User Experience",
-    "idx_buyer":"load Buyer User Experience",
-    "idx_seller":"load Seller User Experience",
-    "idx_provider":"load Provider User Experience",
-    "idx_shipper":"load Shipper User Experience",
+    "idx_buyer":"load Owner User Experience",
+    "idx_seller":"load Verifier User Experience",
+    "idx_provider":"load Publisher User Experience",
+    "idx_shipper":"load Auditor User Experience",
     "idx_financeco":"load Finance Company User Experience",
     "idx_roles":"Roles",
     "idx_admin":"Admin",
@@ -16,7 +16,7 @@
     "idx_blockchain": "Show Blockchain"
     },
     "admin": {
-    "title":"Global Finance with Blockchain",    
+    "title":"Patent Publishing with Blockchain",    
     "rm":"Resource Management",
     "rm_api":"API",
     "rm_param":"Parameters",
@@ -27,16 +27,16 @@
     "rm_am_param":"Co Name, id, Type"  
     },
     "buyer": {
-    "title":"Select Buyer to see their view: ",
+    "title":"Select Owner to see their view: ",
     "newOrder":"Create New Order",
     "orderStatus":"Display Order Status"
     },    
     "createMember": {
     "cd_type":"Type",
-    "cd_buyer":"Buyer",
-    "cd_seller":"Seller",
-    "cd_shipper":"Shipper",
-    "cd_provider":"Provider",
+    "cd_buyer":"Owner",
+    "cd_seller":"Verifier",
+    "cd_shipper":"Auditor",
+    "cd_provider":"Publisher",
     "cd_financeco":"FinanceCo",
     "cd_cn":"Company Name",
     "cd_e":"email Address",
@@ -61,17 +61,17 @@
     "financeCOorderStatus":"Display Order Status"
     },    
     "provider": {
-    "title":"Select Provider to see their view: ",
+    "title":"Select Publisher to see their view: ",
     "provider_clear":"Clear Window",
     "providerOrderStatus":"Display Order Status"
     },    
     "seller": {
-    "title":"Select Seller to see their view: ",
+    "title":"Select Verifier to see their view: ",
     "seller_clear":"Clear Window",
     "sellerOrderStatus":"Display Order Status"
     },
     "shipper": {
-    "title":"Select Shipper to see their view: ",
+    "title":"Select Auditor to see their view: ",
     "shipper_clear":"Clear Window",
     "shipperOrderStatus":"Display Order Status "
     },
@@ -96,18 +96,18 @@
     "orderno":"Order #",
     "status":"Status",
     "total":"Total",
-    "seller":"Seller: ",
+    "seller":"Verifier: ",
     "itemno":"Item Number",
     "description":"Description",
     "qty":"Quantity",
     "price":"Price",
     "processing_msg":"Processing {0} request for order number: {1}",
-    "b_no_order_msg":"No orders for this buyer: ",
-    "s_no_order_msg":"No orders for this seller: ",
-    "p_no_order_msg":"No orders for this provider: ",
-    "sh_no_order_msg":"No orders for this shipper: ",
+    "b_no_order_msg":"No orders for this owner: ",
+    "s_no_order_msg":"No orders for this verifier: ",
+    "p_no_order_msg":"No orders for this publisher: ",
+    "sh_no_order_msg":"No orders for this auditor: ",
     "create_msg":"Processing Create Order request",
-    "buyer":"Buyer: "
+    "buyer":"Owner: "
     },
     "financeCoOrder": {
     "status":"Current Status: ",
@@ -125,7 +125,7 @@
     "backordered":"Backordered?",
     "notBackordered":"(not Backordered)",
     "shippingRequested":"Shipping Requested",
-    "noRequestShip":"(No Request to Shipper)",
+    "noRequestShip":"(No Request to Auditor)",
     "shippingStarted":"Shipping Started",
     "noDeliveryStart":"(Delivery not Started)",
     "delivered":"Delivered",

@@ -38,7 +38,7 @@ app.use(cookieParser(sessionSecret));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.set('appName', 'global-financing');
+app.set('appName', 'globalpatents');
 process.title = 'Z2B-C12';
 app.set('port', appEnv.port);
 
