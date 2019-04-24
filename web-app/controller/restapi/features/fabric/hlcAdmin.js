@@ -41,11 +41,10 @@ const ccp = JSON.parse(ccpJSON);
 exports.getRegistries = function(req, res, next)
 {
     var allRegistries = [ 
-        [ 'Buyer' ],
-        [ 'FinanceCo' ],
-        [ 'Provider' ],
-        [ 'Seller' ],
-        [ 'Shipper' ] 
+        [ 'Owner' ],
+        [ 'Verifier' ],
+        [ 'Publisher' ],
+        [ 'Auditor' ]
     ];
     res.send({'result': 'success', 'registries': allRegistries});
    
@@ -78,7 +77,7 @@ exports.getMembers = async function(req, res, next) {
         const network = await gateway.getNetwork('mychannel');
 
         // Get addressability to  contract
-        const contract = await network.getContract('globalfinancing');
+        const contract = await network.getContract('globalpatents');
                 
         switch (req.body.registry)
         {

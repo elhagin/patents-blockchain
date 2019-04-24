@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "A global financing web-application",
   "scripts": {
-    "start": "node index"
+    "start": "nodemon index"
   },
   "engines": {
     "node": ">=8",
@@ -28,6 +28,7 @@
     "http": "0.0.0",
     "https": "^1.0.0",
     "mime": "^2.0.2",
+    "nodemon": "^1.18.11",
     "os": "^0.1.1",
     "path": "^0.12.7",
     "sleep": "^5.1.1",

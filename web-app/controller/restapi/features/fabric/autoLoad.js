@@ -35,7 +35,6 @@ const ccpPath = path.resolve(__dirname, 'connection.json');
 const ccpJSON = fs.readFileSync(ccpPath, 'utf8');
 const ccp = JSON.parse(ccpJSON);
 
-const financeCoID = 'easymoney@easymoneyinc.com';
 const svc = require('./Z2B_Services');
 
 /**
@@ -67,29 +66,27 @@ exports.autoLoad = async function autoLoad(req, res, next) {
 
         // A gateway defines the peers used to access Fabric networks
         const gateway = new Gateway();
-        await gateway.connect(ccp, { wallet, identity: 'User1@org1.example.com', discovery: { enabled: false } });
+        await gateway.connect(ccp, { wallet, identity: 'user1', discovery: { enabled: false } });
 
         // Get addressability to network
         const network = await gateway.getNetwork('mychannel');
 
         // Get addressability to  contract
-        const contract = await network.getContract('globalfinancing');
+        const contract = await network.getContract('globalpatents');
 
-        //get list of buyers, sellers, providers, shippers, financeCos
-        const responseBuyer = await contract.evaluateTransaction('GetState', "buyers");
-        let buyers = JSON.parse(JSON.parse(responseBuyer.toString()));
+        //get list of owners, verifiers, publishers, auditors, financeCos
+        const responseOwner = await contract.evaluateTransaction('GetState', "owners");
+
+        let owners = JSON.parse(JSON.parse(responseOwner.toString()));
                 
-        const responseSeller = await contract.evaluateTransaction('GetState', "sellers");
-        let sellers = JSON.parse(JSON.parse(responseSeller.toString()));
+        const responseVerifier = await contract.evaluateTransaction('GetState', "verifiers");
+        let verifiers = JSON.parse(JSON.parse(responseVerifier.toString()));
  
-        const responseProvider = await contract.evaluateTransaction('GetState', "providers");
-        let providers = JSON.parse(JSON.parse(responseProvider.toString()));
+        const responsePublisher = await contract.evaluateTransaction('GetState', "publishers");
+        let publishers = JSON.parse(JSON.parse(responsePublisher.toString()));
 
-        const responseShipper = await contract.evaluateTransaction('GetState', "shippers");
-        let shippers = JSON.parse(JSON.parse(responseShipper.toString()));
-        
-        const responseFinanceCo = await contract.evaluateTransaction('GetState', "financeCos");
-        let financeCos = JSON.parse(JSON.parse(responseFinanceCo.toString()));
+        const responseAuditor = await contract.evaluateTransaction('GetState', "auditors");
+        let auditors = JSON.parse(JSON.parse(responseAuditor.toString()));
 
         //iterate through the list of members in the memberList.json file        
         for (let member of startupFile.members) {
@@ -99,36 +96,31 @@ exports.autoLoad = async function autoLoad(req, res, next) {
             console.log('member.companyName: ' + member.companyName);
             console.log('member.pw: ' + member.pw);
 
-            var transaction = 'Register' + member.type;
+            var transaction = 'register' + member.type;
             console.log('transaction: ' + transaction);            
 
-            for (let buyer of buyers) { 
-                if (buyer == member.id) {
+            for (let owner of owners) { 
+                if (owner == member.id) {
                     res.send({'error': 'member id already exists'});
                 }
             }
-            for (let seller of sellers) { 
-                if (seller == member.id) {
+            for (let verifier of verifiers) { 
+                if (verifier == member.id) {
                     res.send({'error': 'member id already exists'});
                 }
             }
-            for (let provider of providers) { 
-                if (provider == member.id) {
+            for (let publisher of publishers) { 
+                if (publisher == member.id) {
                     res.send({'error': 'member id already exists'});
                 }
             }
-            for (let shipper of shippers) { 
-                if (shipper == member.id) {
-                    res.send({'error': 'member id already exists'});
-                }
-            }
-            for (let financeCo of financeCos) { 
-                if (financeCo == member.id) {
+            for (let auditor of auditors) { 
+                if (auditor == member.id) {
                     res.send({'error': 'member id already exists'});
                 }
             }
                         
-            //register a buyer, seller, provider, shipper, financeCo
+            //register an owner, a verifier, publisher, auditor
             const response = await contract.submitTransaction(transaction, member.id, member.companyName);
             console.log('transaction response: ')
             console.log(JSON.parse(response.toString()));  
@@ -136,46 +128,30 @@ exports.autoLoad = async function autoLoad(req, res, next) {
             console.log('Next');                
 
         } 
-        
-        // iterate through the order objects in the memberList.json file.
-        for (let each in startupFile.items){(function(_idx, _arr){itemTable.push(_arr[_idx]);})(each, startupFile.items);}
-        svc.saveItemTable(itemTable);
 
-        let allOrders = new Array();
+        let allPatents = new Array();
 
-        console.log('Get all orders'); 
-        for (let buyer of buyers) { 
-            const buyerResponse = await contract.evaluateTransaction('GetState', buyer);
-            var _buyerjsn = JSON.parse(JSON.parse(buyerResponse.toString()));       
+        console.log('Get all patents'); 
+        for (let owner of owners) { 
+            const ownerResponse = await contract.evaluateTransaction('GetState', owner);
+            var _ownerjsn = JSON.parse(JSON.parse(ownerResponse.toString()));       
             
-            for (let orderNo of _buyerjsn.orders) {                 
-                allOrders.push(orderNo);            
+            for (let patentRequest of _ownerjsn.patentRequests) {                 
+                allPatents.push(patentRequest);            
             }                           
         }
 
-        console.log('Go through all orders'); 
-        for (let order of startupFile.assets) {
-
-            let _tmp = svc.addItems(order, itemTable);
-            let items = JSON.stringify(_tmp.items);
-            let amount = _tmp.amount.toString();
-
-            console.log('\norder.id: ' + order.id);
-            console.log('order.buyer: ' + order.buyer);
-            console.log('order.seller: ' + order.seller);
-            console.log('financeCoID: ' + financeCoID);
-            console.log('items: ' + items);
-            console.log('amount: ' + amount);
-
-            for (let orderNo of allOrders) { 
-                if (orderNo == order.id) {
-                    res.send({'error': 'order already exists'});
+        console.log('Go through all patents'); 
+        for (let patent of startupFile.assets) {
+            for (let patentNo of allPatents) { 
+                if (patentNo == patent.id) {
+                    res.send({'error': 'patent already exists'});
                 }
-            }            
-
-            const createOrderResponse = await contract.submitTransaction('CreateOrder', order.buyer, order.seller, financeCoID, order.id, items, amount);
-            console.log('createOrderResponse: ')
-            console.log(JSON.parse(createOrderResponse.toString()));
+            }
+            
+            const createPatentResponse = await contract.submitTransaction('createPatentRequest', patent.id, patent.owners, patent.verifier, patent.patentIndustry, patent.priorArtifacts, patent.details);
+            console.log('createPatentResponse: ');
+            console.log(JSON.parse(createPatentResponse.toString()));
 
             console.log('Next');
                       
